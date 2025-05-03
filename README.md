@@ -362,6 +362,7 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
     [274]  Revolt ZX-7717 power meter
     [275]  GM-Aftermarket TPMS
     [276]  RainPoint HCS012ARF Rain Gauge sensor
+    [277]* HG9901 Moisture sensor
 
 * Disabled by default, use -R n or a conf file to enable
 
