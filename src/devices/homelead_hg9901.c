@@ -132,7 +132,7 @@ static int homelead_hg9901_decoder(r_device *decoder, bitbuffer_t *bitbuffer)
     		"id",               "ID",               DATA_FORMAT,    "%04X",	 	 DATA_INT,    id,
             "battery_ok",       "Battery",      	DATA_INT,    	batt_lvl > 1, // Level 1 means "Low"
     		"battery_pct",      "Battery level",    DATA_INT,       100 * batt_lvl / 3, // Note: this might change with #3103
-    		"temperature_C",	"Temperature",	    DATA_INT,       temperature,
+            "temperature_C",    "Temperature",      DATA_FORMAT,    "%.0f C",    DATA_DOUBLE, (double)temperature,
             "moisture",         "Moisture",     	DATA_FORMAT, 	"%d %%", 	 DATA_INT, moisture,
     		"light_lvl",        "Light level",      DATA_INT,       light_lvl,
     		"sequence",         "TX Sequence",      DATA_INT,       sequence,
