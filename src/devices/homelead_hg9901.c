@@ -83,22 +83,19 @@ Note: Uses one AA battery AA or rechargeable cell, lasts for up to: 18 months.
 */
 static int homelead_hg9901_decoder(r_device *decoder, bitbuffer_t *bitbuffer)
 {
-    // Check that num_rows is 1
-    if (bitbuffer->num_rows != 1) {
-        return DECODE_ABORT_EARLY; // wrong num_rows
-    }
-    int row = 0;
-    // Check that bits_per_row is 65
-    unsigned row_len = bitbuffer->bits_per_row[row]; // 65, last one would be 61
-    if (row_len != 65) {
+    int row = bitbuffer_find_repeated_row(bitbuffer, 1, 65); // expected are 12 repeats but 1 is enough
+
+    // Check that bits_per_row is 65 or a few bits more
+    unsigned row_len = bitbuffer->bits_per_row[row];
+    if (row_len > 65 + 8) {
         return DECODE_ABORT_EARLY; // wrong Data Length (must be 65)
     }
 
     // Search preamble
     uint8_t const preamble[] = {0x55, 0xaa};
-    unsigned pos = bitbuffer_search(bitbuffer, 0, 0, preamble, 16);
-    if (pos > 8) { // match only near the start
-        return DECODE_ABORT_LENGTH; // preamble not found
+    unsigned pos = bitbuffer_search(bitbuffer, row, 0, preamble, 16);
+    if (pos + 65 > row_len) {
+        return DECODE_ABORT_LENGTH; // preamble not found or packet truncated
     }
 
     // Invert data
@@ -161,10 +158,10 @@ static char const *const output_fields[] = {
 r_device const homelead_hg9901 = {
         .name        = "Homelead HG9901 (Geevon, Dr.Meter, Royal Gardineer) soil moisture/temp/light level sensor",
         .modulation  = OOK_PULSE_PWM,
-        .short_width = 432,  // 400
-        .long_width  = 1228, // 1200
-        .gap_limit   = 2000,
-        .reset_limit = 3000,
+        .short_width = 432,  // gap is 1000
+        .long_width  = 1228, // gap is 230
+        .gap_limit   = 2000, // packet gap is 3700
+        .reset_limit = 4500,
         .decode_fn   = &homelead_hg9901_decoder,
         .fields      = output_fields,
 };
